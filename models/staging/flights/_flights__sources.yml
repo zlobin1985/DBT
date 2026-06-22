@@ -1,0 +1,32 @@
+sources:
+  - name: demo_src
+    description: Данные из БД демо Postgres 
+    database: dwh_flight
+    description: Собественная БД
+    tables:
+      - name: aircrafts
+        description: Модели самолетов
+        columns:
+        - name: aircraft_code
+          description: Код модели самолета 
+          tests:
+            - not_null
+            - unique
+        - name: model
+        - name: range
+      - name: airports
+      - name: seats
+      - name: bookings
+        columns:
+          - name: book_ref
+          - name: book_date
+          - name: total_amount
+        freshness:
+          warn_after:
+            count: 600000
+            period: hour
+          error_after:
+            count: 1000000
+            period: day    
+          filter: current_timestamp::date - book_date::date < 3000000 
+        loaded_at_field: book_date::timestamp
